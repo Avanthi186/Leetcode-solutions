@@ -15,32 +15,31 @@
  */
 class Solution {
     public int countNodes(TreeNode root) {
-    if(root == null){
+        if(root == null)
         return 0;
-    }
-        int lefth = getlefth(root);
-        int righth = getrighth(root);
 
+        int lefth = countlefth(root);
+        int righth = countrighth(root);
         if(lefth == righth){
-            return (1 << lefth) - 1;
+            return (int)Math.pow(2, lefth) - 1;
         }
-        return countNodes(root.left) + countNodes(root.right) + 1;
+        return 1 + countNodes(root.left) + countNodes(root.right);
     }
 
-    private int getlefth(TreeNode root){
+    private int countlefth(TreeNode node){
         int h = 0;
-
-        while(root != null){
+        while(node != null){
             h++;
-            root =root.left;
+            node = node.left;
         }
         return h;
     }
-    private int getrighth(TreeNode root){
+
+    private int countrighth(TreeNode node){
         int h = 0;
-        while(root != null){
+        while(node != null){
             h++;
-            root = root.right;
+            node = node.right;
         }
         return h;
     }
