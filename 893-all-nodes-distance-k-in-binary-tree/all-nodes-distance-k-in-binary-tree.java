@@ -9,59 +9,53 @@
  */
 class Solution {
     public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
-       Map<TreeNode, TreeNode> parent = new HashMap<>();
-       makeparent(root, parent);
+        Map<TreeNode, TreeNode> par = new HashMap<>();
+        findpar(root, null, par);
 
-       Queue<TreeNode> q = new LinkedList<>();
-       Set<TreeNode> v = new HashSet<>();
-       q.offer(target);
-       v.add(target);
-       int d = 0;
-       while(!q.isEmpty()){
-        if(d == k){
-            break;
+        Queue<TreeNode> queue = new LinkedList<>();
+        Set<TreeNode> v = new HashSet<>();
+
+        queue.offer(target);
+        v.add(target);
+
+        int dist = 0;
+        while(!queue.isEmpty() && dist < k){
+            int s = queue.size();
+            for(int i = 0; i < s; i++){
+                TreeNode node = queue.poll();
+
+                if(node.right != null && v.add(node.right)){
+                    queue.offer(node.right);
+                }
+
+                if(node.left != null && v.add(node.left)){
+                    queue.offer(node.left);
+                }
+
+                TreeNode parnode = par.get(node);
+                if(parnode != null && v.add(parnode)){
+                    queue.offer(parnode);
+                }
+            }
+            dist++;
+
         }
-
-        int size = q.size();
-        for(int i = 0; i < size; i++){
-            TreeNode curr = q.poll();
-
-            if(curr.left != null & !v.contains(curr.left)){
-                q.offer(curr.left);
-                v.add(curr.left);
-            }
-            if(curr.right != null && !v.contains(curr.right)){
-                q.offer(curr.right);
-                v.add(curr.right);
-            }
-            if(parent.containsKey(curr) && !v.contains(parent.get(curr))){
-                q.offer(parent.get(curr));
-                v.add(parent.get(curr));
-            }
+        List<Integer> res = new ArrayList<>();
+        while(!queue.isEmpty()){
+        res.add(queue.poll().val);
         }
-        d++;
-       }
-       List<Integer> ans = new ArrayList<>();
-       while(!q.isEmpty()){
-        ans.add(q.poll().val);
-       }
-       return ans;
+        return res;
+
     }
-    private void makeparent(TreeNode root, Map<TreeNode, TreeNode> parent){
-        Queue<TreeNode> q = new LinkedList<>();
-        q.offer(root);
+    private void findpar(TreeNode node, TreeNode parnode, Map<TreeNode, TreeNode> par){
+        if(node == null){
+            return;
 
-        while(!q.isEmpty()){
-            TreeNode cur = q.poll();
-
-            if(cur.left != null){
-                parent.put(cur.left, cur);
-                q.offer(cur.left);
-            }
-            if(cur.right != null){
-                parent.put(cur.right, cur);
-                q.offer(cur.right);
-            }
         }
+
+        par.put(node, parnode);
+
+        findpar(node.left, node, par);
+        findpar(node.right, node, par);
     }
 }
